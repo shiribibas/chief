@@ -4,20 +4,24 @@ import { PersonalPage } from './pages/PersonalPage';
 import { Catalog } from './pages/Catalog';
 import { Edit } from './pages/Edit';
 
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+function getRoute() {
+  const path = window.location.pathname;
+  return BASE ? path.replace(BASE, '') || '/' : path;
+}
+
 export default function App() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [currentPath, setCurrentPath] = useState(getRoute);
 
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPath(window.location.pathname);
-    };
-
+    const handlePopState = () => setCurrentPath(getRoute());
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const navigate = (path: string) => {
-    window.history.pushState({}, '', path);
+    window.history.pushState({}, '', BASE + path);
     setCurrentPath(path);
   };
 
